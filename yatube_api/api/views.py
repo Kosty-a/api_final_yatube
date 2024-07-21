@@ -28,14 +28,17 @@ class PostViewSet(CustomViewSet):
 class CommentViewSet(CustomViewSet):
     serializer_class = CommentSerializer
 
-    def get_queryset(self):
+    def get_post(self):
         post_id = self.kwargs.get('post_id')
         post = Post.objects.get(pk=post_id)
+        return post
+
+    def get_queryset(self):
+        post = self.get_post()
         return post.comments.all()
 
     def perform_create(self, serializer):
-        post_id = self.kwargs.get('post_id')
-        post = Post.objects.get(pk=post_id)
+        post = self.get_post()
         serializer.save(author=self.request.user, post=post)
 
 

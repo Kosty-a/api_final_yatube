@@ -1,23 +1,10 @@
-import base64
-
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.files.base import ContentFile
 from django.db import IntegrityError
 from posts.models import Comment, Follow, Group, Post, User
 from rest_framework import serializers
 from rest_framework.relations import PrimaryKeyRelatedField, SlugRelatedField
 
-
-class Base64ImageField(serializers.ImageField):
-
-    def to_internal_value(self, data):
-        if isinstance(data, str) and data.startswith('data:image'):
-            format, imgstr = data.split(';base64,')
-            ext = format.split('/')[-1]
-
-            data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
-
-        return super().to_internal_value(data)
+from .fields import Base64ImageField
 
 
 class GroupSerializer(serializers.ModelSerializer):
